@@ -1,6 +1,7 @@
 // IMPORTS
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
 // MIDDLEWARE
 // set the 'public' folder as the location for our static files:
@@ -8,6 +9,9 @@ app.use(express.static('public'));
 
 // specify that we are using 'ejs' templates in our app:
 app.set('view engine', 'ejs');
+
+// allow the app to receive data from form submits
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // ROUTES
 // Home route using EJS
@@ -34,7 +38,12 @@ app.get('/signup', (req, res) => {
    res.render('signup-layout', {
       title: "Sign Up"
    });
- });
+});
+
+// Signup Confirmation
+app.post('/signup-confirmation', (req, res) => {
+   res.send("Form data received: " + JSON.stringify(req.body));
+});
 
 // START THE SERVER
 const port = 8080; // We'll run the server on port 8080
