@@ -42,7 +42,49 @@ app.get('/signup', (req, res) => {
 
 // Signup Confirmation
 app.post('/signup-confirmation', (req, res) => {
-   res.send("Form data received: " + JSON.stringify(req.body));
+   // import the addUser function
+   const {addUser} = require("./modules/user-helpers");
+ 
+   // destructure the req.body object into individual variables
+   const {firstName, lastName, email, password, confirmPassword} = req.body;
+ 
+   // make sure that all required data has been sent
+   if(firstName && lastName && email && password && confirmPassword){
+     // make sure the passwords match
+     if(password === confirmPassword){
+       // If everything is valid, then add the new user
+       addUser({firstName, lastName, email, password});
+       res.send("Thank you for signing up!")
+     }else{
+       res.send("Invalid form submit - Passwords do not match!")
+     }
+   }else{
+    res.send("Invalid form submit - All fields are required!");
+   }
+});
+
+// Render the login page
+app.get('/login', (req, res) => {
+   res.render('login-layout', {
+      title: "Log In"
+   });
+});
+ 
+ app.post('/login', (req, res) => {
+
+   // import the login() function
+   const {login} = require("./modules/user-helpers");
+ 
+   // destructure the req.body object to get the email and password from it
+   const {email, password} = req.body;
+ 
+   // attempt to login
+   const user = login(email, password);
+   if(user){
+     res.send(`Hello ${user.firstName}`);
+   }else{
+     res.send("Invalid Login Attempt");
+   }
 });
 
 // START THE SERVER
